@@ -18,27 +18,22 @@ try {
 
     PreparedStatement ps1 = con.prepareStatement("SELECT COUNT(*) FROM expenses");
     ResultSet rs1 = ps1.executeQuery();
-
     if(rs1.next()){
         totalRecords = rs1.getInt(1);
     }
 
     PreparedStatement ps2 = con.prepareStatement("SELECT SUM(amount) FROM expenses");
     ResultSet rs2 = ps2.executeQuery();
-
     if(rs2.next()){
         totalAmount = rs2.getDouble(1);
     }
-    PreparedStatement ps3 = con.prepareStatement(
-    	    "SELECT category, SUM(amount) FROM expenses GROUP BY category"
-    	);
 
-    	ResultSet rs3 = ps3.executeQuery();
-
-    	while(rs3.next()){
-    	    chartLabels += "'" + rs3.getString(1) + "',";
-    	    chartData += rs3.getDouble(2) + ",";
-    	}
+    PreparedStatement ps3 = con.prepareStatement("SELECT category, SUM(amount) FROM expenses GROUP BY category");
+    ResultSet rs3 = ps3.executeQuery();
+    while(rs3.next()){
+        chartLabels += "'" + rs3.getString(1) + "',";
+        chartData += rs3.getDouble(2) + ",";
+    }
 
 } catch(Exception e) {
     e.printStackTrace();
@@ -51,67 +46,156 @@ try {
 <title>Dashboard</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<style>
+body {
+    background: #f4f7fb;
+    font-family: Arial, sans-serif;
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    background: #0f172a;
+    color: white;
+    padding: 25px 20px;
+}
+
+.sidebar h3 {
+    font-weight: bold;
+    margin-bottom: 35px;
+}
+
+.sidebar a {
+    display: block;
+    color: #cbd5e1;
+    text-decoration: none;
+    margin: 18px 0;
+    font-size: 16px;
+}
+
+.sidebar a:hover {
+    color: white;
+}
+
+.main-content {
+    margin-left: 270px;
+    padding: 30px;
+}
+
+.topbar {
+    background: white;
+    border-radius: 16px;
+    padding: 20px 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    border: none;
+    border-radius: 18px;
+    color: white;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.card-green {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.card-blue {
+    background: linear-gradient(135deg, #2563eb, #38bdf8);
+}
+
+.card-purple {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+}
+
+.chart-card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    margin-top: 30px;
+}
+
+.action-btn {
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-right: 10px;
+}
+</style>
 </head>
-<body class="bg-light">
 
-<div class="container mt-5">
+<body>
 
-    <h2 class="text-center mb-4">Organization Expense Dashboard</h2>
+<div class="sidebar">
+    <h3>ExpensePro</h3>
 
-    <div class="alert alert-primary text-center">
-        Welcome, <b><%= session.getAttribute("name") %></b> |
-        Role: <b><%= session.getAttribute("role") %></b>
-    </div>
-
-    <div class="row text-center">
-
-        <div class="col-md-4">
-            <div class="card shadow bg-success text-white">
-                <div class="card-body">
-                    <h4>Total Records</h4>
-                    <h2><%= totalRecords %></h2>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow bg-warning text-dark">
-                <div class="card-body">
-                    <h4>Total Amount</h4>
-                    <h2>Rs. <%= totalAmount %></h2>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow bg-info text-white">
-                <div class="card-body">
-                    <h4>Current User</h4>
-                    <h2><%= session.getAttribute("role") %></h2>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="text-center mt-4">
-        <a href="addExpense.jsp" class="btn btn-success">Add Expense</a>
-        <a href="viewExpenses.jsp" class="btn btn-primary">View Expenses</a>
-        <a href="login.jsp" class="btn btn-danger">Logout</a>
-    </div>
-
+    <a href="dashboard.jsp">Dashboard</a>
+    <a href="addExpense.jsp">Add Expense</a>
+    <a href="viewExpenses.jsp">View Expenses</a>
+    <a href="viewExpenses.jsp">Reports</a>
+    <a href="login.jsp">Logout</a>
 </div>
-<div class="card shadow mt-5">
-    <div class="card-header bg-dark text-white text-center">
-        <h4>Category-wise Expense Chart</h4>
+
+<div class="main-content">
+
+    <div class="topbar d-flex justify-content-between align-items-center">
+        <div>
+            <h2>Organization Expense Dashboard</h2>
+            <p class="text-muted mb-0">
+                Welcome, <b><%= session.getAttribute("name") %></b>
+            </p>
+        </div>
+
+        <div class="badge bg-primary fs-6 p-3">
+            Role: <%= session.getAttribute("role") %>
+        </div>
     </div>
-    <div class="card-body">
+
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="stat-card card-green">
+                <h5>Total Records</h5>
+                <h1><%= totalRecords %></h1>
+                <p class="mb-0">Expense entries stored</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card card-blue">
+                <h5>Total Amount</h5>
+                <h1>Rs. <%= totalAmount %></h1>
+                <p class="mb-0">Overall expense value</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card card-purple">
+                <h5>Current User</h5>
+                <h1><%= session.getAttribute("role") %></h1>
+                <p class="mb-0">Logged-in account type</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mt-4">
+        <a href="addExpense.jsp" class="btn btn-success action-btn">+ Add Expense</a>
+        <a href="viewExpenses.jsp" class="btn btn-primary action-btn">View Expenses</a>
+        <a href="ExportCSVServlet" class="btn btn-dark action-btn">Export CSV</a>
+    </div>
+
+    <div class="chart-card">
+        <h4 class="mb-4">Category-wise Expense Analysis</h4>
         <canvas id="expenseChart"></canvas>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</div>
 
 <script>
 const ctx = document.getElementById('expenseChart');
@@ -128,5 +212,6 @@ new Chart(ctx, {
     }
 });
 </script>
+
 </body>
 </html>
