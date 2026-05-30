@@ -1,36 +1,29 @@
 # Organization Expense Management System
 
-# Overview
-A web-based expense management system developed using Java, JSP, Servlets, JDBC, MySQL, Bootstrap, and Apache Tomcat.
+A web-based expense management system developed using JSP, Servlets, JDBC, MySQL, and Bootstrap.
 
 # Features
-- Secure Login Authentication
-- Session Management
-- Add Expense
+- User Authentication
+- Role-Based Access (Admin, Manager, Employee)
+- Add Expenses
+- Edit Expenses
+- Delete Expenses
 - View Expenses
-- Edit Expense
-- Delete Expense
-- Search Expenses
-- Category Filtering
-- Dashboard Analytics
-- Category-wise Expense Chart
-- CSV Report Export
+- Expense Reports & Analytics
+- Category-wise Charts
+- CSV Export
+- Responsive Dashboard UI
 
 # Technology Stack
 - Java
 - JSP & Servlets
 - JDBC
 - MySQL
-- Bootstrap
+- Bootstrap 5
 - Chart.js
 - Apache Tomcat
 
-# Modules
-1. User Authentication
-2. Expense Management
-3. Dashboard Analytics
-4. Expense Reports
-5. CSV Export
-
-# Author
+# Developed By
 Dhruv Tripathi
+B.Tech CSE (Cyber Security)
+Galgotias University
