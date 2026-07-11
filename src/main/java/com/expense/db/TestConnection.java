@@ -6,12 +6,18 @@ public class TestConnection {
 
     public static void main(String[] args) {
 
-        Connection con = DBConnection.getConnection();
+        try {
+            Connection con = DBConnection.getConnection();
 
-        if(con != null) {
-            System.out.println("Connection successful");
-        } else {
-            System.out.println("Connection failed");
+            if (con != null) {
+                System.out.println("Connection successful");
+                con.close();
+            } else {
+                System.out.println("Connection failed");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
