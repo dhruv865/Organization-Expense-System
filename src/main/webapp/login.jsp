@@ -54,6 +54,9 @@ body {
     background: linear-gradient(135deg, #2563eb, #38bdf8);
     border: none;
 }
+<div class="text-center mt-3">
+    <a href="forgotPassword.jsp">Forgot Password?</a>
+</div>
 
 .info-box {
     background: #eff6ff;
@@ -81,7 +84,29 @@ body {
             <h2>ExpensePro</h2>
             <p>Organization Expense Management System</p>
         </div>
+<%
+String error = request.getParameter("error");
 
+if ("invalid".equals(error)) {
+%>
+    <div class="alert alert-danger">
+        Invalid email address or password.
+    </div>
+<%
+} else if ("empty".equals(error)) {
+%>
+    <div class="alert alert-warning">
+        Please enter both email and password.
+    </div>
+<%
+} else if ("database".equals(error)) {
+%>
+    <div class="alert alert-danger">
+        Unable to connect to the database. Please try again.
+    </div>
+<%
+}
+%>
         <form action="LoginServlet" method="post">
             <input type="email" name="email" class="form-control mb-3" placeholder="Email Address" required>
 

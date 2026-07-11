@@ -16,45 +16,74 @@ import com.expense.db.DBConnection;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
-	    response.sendRedirect("login.jsp");
-	}
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
             throws ServletException, IOException {
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        try {
-            Connection con = DBConnection.getConnection();
+        if (email == null || email.trim().isEmpty()
+                || password == null || password.trim().isEmpty()) {
 
-            String query = "SELECT * FROM users WHERE email=? AND password=?";
+            response.sendRedirect("login.jsp?error=empty");
+            return;
+        }
 
-            PreparedStatement ps = con.prepareStatement(query);
+        String sql =
+            "SELECT id, name, email, role " +
+            "FROM users WHERE email=? AND password=?";
 
-            ps.setString(1, email);
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, email.trim());
             ps.setString(2, password);
 
-            ResultSet rs = ps.executeQuery();
+            try (ResultSet rs = ps.executeQuery()) {
 
-            if (rs.next()) {
+                if (rs.next()) {
 
-                HttpSession session = request.getSession();
+                    HttpSession session = request.getSession(true);
 
-                session.setAttribute("name", rs.getString("name"));
-                session.setAttribute("role", rs.getString("role"));
+                    session.setAttribute("userId", rs.getInt("id"));
+                    session.setAttribute("name", rs.getString("name"));
+                    session.setAttribute("email", rs.getString("email"));
+                    session.setAttribute("role", rs.getString("role"));
 
-                response.sendRedirect("dashboard.jsp");
+                    session.setMaxInactiveInterval(30 * 60);
 
-            } else {
+                    response.sendRedirect(
+                        request.getContextPath() + "/dashboard.jsp"
+                    );
+                    return;
+                }
 
-                response.sendRedirect("login.jsp?error=1");
+                response.sendRedirect(
+                    request.getContextPath() + "/login.jsp?error=invalid"
+                );
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            response.sendRedirect(
+                request.getContextPath() + "/login.jsp?error=database"
+            );
         }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.sendRedirect(
+            request.getContextPath() + "/login.jsp"
+        );
     }
 }

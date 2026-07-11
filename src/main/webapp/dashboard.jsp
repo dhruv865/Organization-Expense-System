@@ -218,7 +218,7 @@ body {
             <a href="viewExpenses.jsp"><i class="bi bi-file-earmark-bar-graph me-2"></i> Reports</a>
         <% } %>
 
-        <a href="login.jsp"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+        <a href="LogoutServlet"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
     </div>
 
     <div class="user-box">

@@ -205,7 +205,7 @@ body {
 
         <div class="form-body">
 
-            <form action="AddExpenseServlet" method="post">
+            <form action="AddExpenseServlet" method="post" enctype="multipart/form-data">
 
                 <div class="field-row">
                     <div class="field-icon"><i class="bi bi-type"></i></div>
@@ -242,12 +242,25 @@ body {
                     <i class="bi bi-shield-check me-2"></i>
                     Make sure all details are correct before saving the expense.
                 </div>
+                <!-- Upload Bill Section -->
+<div class="form-group mt-4 mb-4">
+    <label class="fw-bold mb-2">
+        <i class="bi bi-file-earmark-image me-2"></i>
+        Upload Bill / Payment Screenshot
+    </label>
+
+    <input type="file"
+           name="bill_image"
+           class="form-control"
+           accept="image/*"
+           required>
+</div>
 
                 <div class="row">
                     <div class="col-md-4">
                         <a href="dashboard.jsp" class="btn btn-outline-secondary w-100 btn-custom">
-                            ← Back to Dashboard
-                        </a>
+    <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+</a>
                     </div>
 
                     <div class="col-md-8">

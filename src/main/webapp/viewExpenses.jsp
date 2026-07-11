@@ -208,6 +208,8 @@ body {
                 <th>Category</th>
                 <th>Date</th>
                 <th>Added By</th>
+                <th>Bill</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
 
@@ -222,6 +224,10 @@ body {
 
                 if(role.equals("Employee")){
                     sql += " AND added_by=?";
+                }
+
+                if(role.equals("Admin")){
+                    sql += " AND status='Approved by Manager'";
                 }
 
                 if(search != null && !search.trim().equals("")){
@@ -268,26 +274,59 @@ body {
         <%= rs.getString("added_by") %>
     </span>
 </td>
+<td>
+    <% if(rs.getString("bill_image") != null && !rs.getString("bill_image").equals("")) { %>
+        <a href="uploads/<%= rs.getString("bill_image") %>" 
+           target="_blank" 
+           class="btn btn-info btn-sm">
+            View Bill
+        </a>
+    <% } else { %>
+        <span class="text-muted">No Bill</span>
+    <% } %>
+</td>
+<td>
+    <span class="badge bg-warning text-dark">
+        <%= rs.getString("status") %>
+    </span>
+</td>
                 <td>
-                    <% if(role.equals("Admin") || role.equals("Manager")) { %>
-                        <a href="editExpense.jsp?id=<%= rs.getInt("id") %>"
-   class="btn btn-warning btn-sm px-3 fw-bold">
-    Edit
-</a>
-                    <% } %>
 
-                    <% if(role.equals("Admin")) { %>
-                        <a href="DeleteExpenseServlet?id=<%= rs.getInt("id") %>"
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirm('Are you sure you want to delete this expense?');">
-                           Delete
-                        </a>
-                    <% } %>
+    <% if(role.equals("Manager") && rs.getString("status").equals("Pending")) { %>
 
-                    <% if(role.equals("Employee")) { %>
-                        <span class="text-muted">View Only</span>
-                    <% } %>
-                </td>
+        <a href="ApprovalServlet?id=<%= rs.getInt("id") %>&action=approve"
+           class="btn btn-success btn-sm">
+           Approve
+        </a>
+
+        <a href="ApprovalServlet?id=<%= rs.getInt("id") %>&action=decline"
+           class="btn btn-danger btn-sm">
+           Decline
+        </a>
+
+    <% } else if(role.equals("Admin") && rs.getString("status").equals("Approved by Manager")) { %>
+
+        <a href="ApprovalServlet?id=<%= rs.getInt("id") %>&action=approve"
+           class="btn btn-success btn-sm">
+           Final Approve
+        </a>
+
+        <a href="ApprovalServlet?id=<%= rs.getInt("id") %>&action=decline"
+           class="btn btn-danger btn-sm">
+           Final Decline
+        </a>
+
+    <% } else if(role.equals("Employee")) { %>
+
+        <span class="text-muted">View Only</span>
+
+    <% } else { %>
+
+        <span class="text-muted">No Action</span>
+
+    <% } %>
+
+</td>
             </tr>
 
             <%
