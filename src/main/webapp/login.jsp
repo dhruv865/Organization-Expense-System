@@ -115,6 +115,31 @@ if ("invalid".equals(error)) {
             <button type="submit" class="btn btn-primary w-100 login-btn">
                 Login to Dashboard
             </button>
+            <div class="row g-2 mt-2">
+    <div class="col-4">
+        <button type="button"
+                class="btn btn-outline-danger w-100 btn-sm"
+                onclick="fillDemo('admin@expensepro.com','admin123')">
+            Admin Demo
+        </button>
+    </div>
+
+    <div class="col-4">
+        <button type="button"
+                class="btn btn-outline-success w-100 btn-sm"
+                onclick="fillDemo('manager@expensepro.com','manager123')">
+            Manager Demo
+        </button>
+    </div>
+
+    <div class="col-4">
+        <button type="button"
+                class="btn btn-outline-primary w-100 btn-sm"
+                onclick="fillDemo('employee@expensepro.com','employee123')">
+            Employee Demo
+        </button>
+    </div>
+</div>
         </form>
 
         <%
@@ -128,9 +153,28 @@ if ("invalid".equals(error)) {
         <div class="info-box">
             Role-based access enabled for Admin, Manager, and Employee.
         </div>
+<div class="info-box mt-3">
+    <strong>Demo Credentials</strong><br><br>
 
+    <strong>Admin</strong><br>
+    Email: admin@expensepro.com<br>
+    Password: admin123<br><br>
+
+    <strong>Manager</strong><br>
+    Email: manager@expensepro.com<br>
+    Password: manager123<br><br>
+
+    <strong>Employee</strong><br>
+    Email: employee@expensepro.com<br>
+    Password: employee123
+</div>
     </div>
 </div>
-
+<script>
+function fillDemo(email, password) {
+    document.querySelector('input[name="email"]').value = email;
+    document.querySelector('input[name="password"]').value = password;
+}
+</script>
 </body>
 </html>
